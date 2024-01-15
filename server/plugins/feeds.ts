@@ -56,6 +56,17 @@ export default class {
         // );
 
         this.fetchPosts();
+
+        this.entrypoint.app.get('/posts', route(async (req, res) => {
+            const query = String(req.query.query);
+
+            return await Posts.find({
+                $or: [
+                    { title: { $regex: query, $options: 'i' } },
+                    { content: { $regex: query, $options: 'i' } },
+                ]
+            }).limit(10).toArray();
+        }));
     }
 
     private addPost = async (data) => {
