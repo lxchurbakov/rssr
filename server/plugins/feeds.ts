@@ -3,8 +3,7 @@ import crypto from 'crypto';
 import { CronJob } from 'cron';
 import Parser from 'rss-parser';
 
-
-import { route, HttpError } from '/libs/utils';
+import { route } from '/libs/utils';
 import { Posts } from '/libs/mongo';
 
 import Entrypoint from './entrypoint';
@@ -59,13 +58,19 @@ export default class {
 
         this.entrypoint.app.get('/posts', route(async (req, res) => {
             const query = String(req.query.query);
+            const page = Number(req.query.page);
 
-            return await Posts.find({
+            const filter = {
                 $or: [
                     { title: { $regex: query, $options: 'i' } },
                     { content: { $regex: query, $options: 'i' } },
                 ]
-            }).limit(10).toArray();
+            };
+
+            const count = await Posts.count(filter);
+            const data =  await Posts.find(filter).limit(10).skip(page * 10).toArray();
+
+            return { count, data };
         }));
     }
 
@@ -75,7 +80,8 @@ export default class {
 
         if (!post) {
             const { insertedId } = await Posts.insertOne({ ...data, hash });
-            console.log(`Added post "${data.title}"`);
+
+            console.log(`Added post "${data.title}" / ${insertedId}`);
         }
     };
 
@@ -90,17 +96,11 @@ export default class {
             const { items, image, feedUrl, paginationLinks, title, description, language } = await parser.parseURL(feed.url);
 
             await Promise.all(items.map(async (item) => {
-                // console.log(item);
-                // console.log(await Posts.find({}).toArray());
                 // const { title, link, pubDate, 'content:encoded': content, } = item;
                 const { title, pubDate, link, content } = item;
 
                 await this.addPost({ title, pubDate, link, content });
             }));
-
-            // console.log({ feed, data });
         }));
-
-        // console.log(await Posts.find({}).toArray());
     };
 };
