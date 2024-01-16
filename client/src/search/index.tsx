@@ -14,17 +14,19 @@ export default () => {
     const api = useApi();
 
     const [query, setQuery] = React.useState('');
-    const [data, setData] = React.useState([] as any[]);
+    const [data, setData] = React.useState(null as any);
     const [count, setCount] = React.useState(0);
+    const [time, setTime] = React.useState(0);
 
     const search = React.useCallback(() => {
-        api.search(query, 0).then(({ count, data }) => {
+        api.search(query, 0).then(({ count, data, time }) => {
             setData(data);
             setCount(count);
+            setTime(time);
         }).catch((err) => {
             // TODO notify
         });
-    }, [query, setData, setCount]);
+    }, [query, setData, setCount, setTime]);
 
     const more = React.useCallback(() => {
         api.search(query, Math.floor(data.length / PAGE_SIZE)).then(({ count, data }) => {
@@ -40,27 +42,31 @@ export default () => {
             <Flex dir="column" mw="800px" m="0px auto">
                 <Base mb="32px" >
                     <Text align="center" size="52px" weight="800">RSS поиск</Text>
-                    <Text align="center" size="18px" weight="400">Ищите блог посты по RSS лентам</Text>
+                    <Text align="center" size="18px" weight="400">Ищите посты по RSS лентам блогов</Text>
                 </Base>
 
-                <LineInput mb="20px" value={query} onChange={setQuery} background="#e7e7e7" placeholder="Ваш запрос" size="16px" />
+                <Base w="100%" mb="64px">
+                    <Flex gap="12px">
+                        <LineInput onEnter={search} w="100%" value={query} onChange={setQuery} background="#e7e7e7" placeholder="Ваш запрос" size="16px" />
 
-                <Flex mb="64px" gap="12px">
-                    <Clickable onClick={search} background="#e7e7e7" p="8px 12px" radius="4px">
-                        <Text size="16px" weight="800">Поиск</Text>
-                    </Clickable>
+                        <Clickable onClick={search} background="#e7e7e7" p="7px 12px" radius="4px">
+                            <Text size="16px" weight="800">Поиск</Text>
+                        </Clickable>
+                    </Flex>
 
-                    {/* <Clickable background="#e7e7e7" p="8px 12px" radius="4px">
-                        <Text size="16px" weight="800">Мне повезет</Text>
-                    </Clickable> */}
-                </Flex>
+                    {data !== null && (
+                        <Base mt="12px">
+                            <Text size="14px" weight="400">Найдено {count} результатов ({(time / Math.pow(10, 9)).toFixed(4)}s)</Text>
+                        </Base>
+                    )}
+                </Base>
 
                 <Base mb="20px" w="100%">
                     <Flex gap="12px" isWrap w="100%" justify="flex-start" align="flex-start">
-                        {data.map((item) => (
+                        {(data || []).map((item) => (
                             <Clickable key={item._id} w="calc(50% - 6px)"background="#e7e7e7" p="12px 16px" radius="8px">
                                 <Text line="1.2" mb="8px" size="22px" weight="800">{item.title}</Text>
-                                <Text mb="12px" size="16px" weight="400">{item.content.substr(0, 200)}</Text>
+                                <Text mb="12px" size="16px" weight="400">{item.content.substr(0, 250)}...</Text>
 
                                 <Flex gap="24px" justify="flex-start">
                                     <Published date={item.pubDate} />
@@ -71,7 +77,7 @@ export default () => {
                     </Flex>
                 </Base>
                 
-                {data.length < count && (
+                {(data || []).length < count && (
                     <Flex gap="12px">
                         <Clickable onClick={more} background="#e7e7e7" p="8px 12px" radius="4px">
                             <Text size="16px" weight="800">Ещё</Text>

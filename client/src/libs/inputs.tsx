@@ -36,12 +36,28 @@ export type Input<T> = { value: T, onChange: ($: T) => void };
 export type TextInputProps = {
     type?: string;
     placeholder?: string;
+    onEnter?: () => void;
 };
 
-export const LineInput = ({ type, placeholder,  value, onChange,  size, weight, color, background, border, outline,  ...props }: TextInputProps & StyledInputProps & Input<string> & BaseProps) => {
+export const LineInput = ({ 
+    type, placeholder,  value, onChange,  size, weight, color, background, border, outline, onEnter, ...props 
+}: TextInputProps & StyledInputProps & Input<string> & BaseProps) => {
+    const handleKeyDown = React.useCallback((e) => {
+        if (e.keyCode === 13) {
+            onEnter?.();
+        }
+    }, [onEnter]);
+
     return (
         <Base w="100%" {...props}>
-            <StyledInput placeholder={placeholder} type={type} value={value || ''} onChange={(e) => onChange(e.target.value || '')} {...{ size, weight, color, background, border, outline }} />
+            <StyledInput 
+                type={type} 
+                value={value || ''} 
+                placeholder={placeholder} 
+                onChange={(e) => onChange(e.target.value || '')} 
+                onKeyDown={handleKeyDown}
+                {...{ size, weight, color, background, border, outline }} 
+            />
         </Base>
     );
 };
