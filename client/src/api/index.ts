@@ -1,7 +1,7 @@
-import qs from 'qs';
+// import qs from 'qs';
 import React from 'react';
 
-import { useBetween } from 'use-between';
+// import { useBetween } from 'use-between';
 
 import { ArgumentsOf } from '/src/libs/types';
 import { useLocalStorage } from '/src/libs/hooks';
@@ -28,8 +28,8 @@ export const useApi = () => {
 
     return React.useMemo(() => {
         return {
-            search: (query: string) => {
-                return call(`${API_URL}/posts?query=${query}`, { method: 'GET', headers });
+            search: (query: string, page: number) => {
+                return call(`${API_URL}/posts?query=${query}&page=${page}`, { method: 'GET', headers });
             },
         };
     }, [headers, setToken]);
