@@ -12,7 +12,7 @@ const parser = new Parser();
 
 const FEEDS_SOURCE = {
     gistId: '5e855f20a70d09e60e25431265666162',
-    versionId: 'b061668cdae57526a9d63c69b999187db0740828',
+    versionId: 'cade6bcf2d9ee7580a6fb7249e81ae60b8910062',
     filename: 'feeds.json',
 };
 
@@ -60,6 +60,8 @@ export default class {
             const query = String(req.query.query);
             const page = Number(req.query.page);
 
+            const start = process.hrtime();
+
             const filter = {
                 $or: [
                     { title: { $regex: query, $options: 'i' } },
@@ -70,7 +72,7 @@ export default class {
             const count = await Posts.count(filter);
             const data =  await Posts.find(filter).limit(10).skip(page * 10).toArray();
 
-            return { count, data };
+            return { count, data, time: process.hrtime(start)[1] };
         }));
     }
 
