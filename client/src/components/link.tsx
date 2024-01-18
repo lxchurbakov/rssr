@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-import { Clickable } from '/src/libs/atoms';
+import { BaseProps, Clickable } from '/src/libs/atoms';
 import { colors } from '/src/libs/theme';
 
 const LinkLine = styled.div<{ color: string }>`
@@ -33,18 +33,22 @@ const LinkCore = styled.a`
     z-index: 2;
 `;
 
-export const Link = ({ color, href, children }: any) => {
+export const Link = ({ color, onClick, href, children, ...props }: React.PropsWithChildren<{ href?: string, onClick?: () => void, color?: string }> & BaseProps) => {
     const navigate = useNavigate();
 
     const go = React.useCallback((e) => {
         e.preventDefault();
+
+        if (onClick) {
+            return onClick();
+        }
 
         if (href.startsWith('http')) {
             window.open(href, '_blank');
         } else {
             navigate(href);
         }
-    }, [href, navigate]);
+    }, [onClick, href, navigate]);
 
     return (
         <LinkBase>
