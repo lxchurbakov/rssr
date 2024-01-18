@@ -4,7 +4,7 @@ import { CronJob } from 'cron';
 import Parser from 'rss-parser';
 
 import { route } from '/libs/utils';
-import { Posts } from '/libs/mongo';
+import { ObjectId, Posts } from '/libs/mongo';
 
 import Entrypoint from './entrypoint';
 
@@ -59,6 +59,8 @@ export default class {
         this.entrypoint.app.get('/posts', route(async (req, res) => {
             const query = String(req.query.query);
             const page = Number(req.query.page);
+            const sort = String(req.query.sort);
+            const sortDir = String(req.query.sortDir);
 
             const start = process.hrtime();
 
@@ -70,9 +72,14 @@ export default class {
             };
 
             const count = await Posts.count(filter);
-            const data =  await Posts.find(filter).limit(10).skip(page * 10).toArray();
+            const data =  await Posts.find(filter).sort({ [sort]: sortDir }).limit(10).skip(page * 10).toArray();
 
             return { count, data, time: process.hrtime(start)[1] };
+        }));
+
+        this.entrypoint.app.post('/posts/:postId/view', route(async (req, res) => {
+            // 
+            return await Posts.updateOne({ _id: new ObjectId(req.params.postId) }, { $inc: { views: 1 } });
         }));
     }
 
@@ -99,9 +106,9 @@ export default class {
 
             await Promise.all(items.map(async (item) => {
                 // const { title, link, pubDate, 'content:encoded': content, } = item;
-                const { title, pubDate, link, content } = item;
+                const { title, pubDate, link, content } = item as any;
 
-                await this.addPost({ title, pubDate, link, content });
+                await this.addPost({ title, pubDate: new Date(pubDate), link, content });
             }));
         }));
     };
