@@ -28,8 +28,11 @@ export const useApi = () => {
 
     return React.useMemo(() => {
         return {
-            search: (query: string, page: number) => {
-                return call(`${API_URL}/posts?query=${query}&page=${page}`, { method: 'GET', headers });
+            search: (query: string, page: number, sort: [string, number]) => {
+                return call(`${API_URL}/posts?query=${query}&page=${page}&sort=${sort[0]}&sortDir=${sort[1]}`, { method: 'GET', headers });
+            },
+            view: (postId: string) => {
+                return call(`${API_URL}/posts/${postId}/view`, { method: 'POST', headers })
             },
         };
     }, [headers, setToken]);
