@@ -1,0 +1,4 @@
+{
+    "name": "rssr",
+    "workspaces": ["client", "server"]
+  }
