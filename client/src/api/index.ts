@@ -3,7 +3,7 @@ import React from 'react';
 
 // import { useBetween } from 'use-between';
 
-import { ArgumentsOf } from '/src/libs/types';
+import { ArgumentsOf, Tag } from '/src/libs/types';
 import { useLocalStorage } from '/src/libs/hooks';
 
 const API_URL = String(process.env.API_URL);
@@ -22,12 +22,22 @@ export const useApi = () => {
     const [token, setToken] = useLocalStorage('session', null);
 
     const headers = React.useMemo(() => ({
-        // 'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
         // 'Authorization': token,
     }), [token]);
 
     return React.useMemo(() => {
         return {
+            tags: {
+                create: (name: string) => 
+                    call(`${API_URL}/tags`, { method: 'POST', headers, body: JSON.stringify({ name }) }),
+                search: (query: string) => 
+                    call<Tag[]>(`${API_URL}/tags?query=${query}`, { method: 'GET', headers }),
+            },
+            posts: {
+                attachTag: (postId: string, name: string) => 
+                    call(`${API_URL}/posts/${postId}/tags/attach`, { method: 'POST', headers, body: JSON.stringify({ name }) }),
+            },
             search: (query: string, page: number, sort: [string, number]) => {
                 return call(`${API_URL}/posts?query=${query}&page=${page}&sort=${sort[0]}&sortDir=${sort[1]}`, { method: 'GET', headers });
             },
