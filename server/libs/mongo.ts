@@ -9,13 +9,9 @@ export const database = client.db(String(process.env.MONGO_DATABASE));
 
 export { ObjectId };
 
-// export const User = database.collection('users');
-// export const Board = database.collection('boards');
-// export const CloudStorage = database.collection('cloud-storage');
-
-// export const EmailSubmissions = database.collection('example101es');
-// export const Views = database.collection('example101views');
 export const Posts = database.collection('posts');
+export const Tags = database.collection('tags');
+export const TagsToPosts = database.collection('tags2posts');
 
 client.connect().catch((error) => {
     console.log(error);
