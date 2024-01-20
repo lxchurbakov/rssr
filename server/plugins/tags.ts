@@ -7,8 +7,9 @@ const TAGS_LIST_COUNT = 5;
 
 export default class {
     constructor (private entrypoint: Entrypoint) {
-        this.entrypoint.app.post('/tags', route(async (req, res) => {
-            const name = req.body.name;
+        // Create a new tag wtih { name }
+        this.entrypoint.app.post('/tags', route(async (req) => {
+            const name = String(req.body.name).toLowerCase();
 
             if (!name) {
                 throw new HttpError(400, 'invalid_name');
@@ -23,13 +24,16 @@ export default class {
             return insertedId;
         }));
 
-        this.entrypoint.app.get('/tags', route(async (req, res) => {
+        // List tags by search query
+        // curently only when tag starts with query
+        this.entrypoint.app.get('/tags', route(async (req) => {
             const query = req.query.query;
 
-            // starts with query
-            return Tags.find({ name: { $regex: '^' + query } }).limit(TAGS_LIST_COUNT).toArray();
+            return Tags.find({ name: { $regex: '^' + query } })
+                .limit(TAGS_LIST_COUNT).toArray();
         }));
 
+        // Delete a tag by id
         this.entrypoint.app.delete('/tags/:tagId', route(async (req, res) => {
             const tagId = req.params.tagId;
             const { deletedCount } = await Tags.deleteOne({ _id: new ObjectId(tagId) });
