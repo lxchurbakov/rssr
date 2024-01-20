@@ -1,9 +1,9 @@
-// import qs from 'qs';
+import qs from 'qs';
 import React from 'react';
 
 // import { useBetween } from 'use-between';
 
-import { ArgumentsOf, Tag } from '/src/libs/types';
+import { ArgumentsOf, Tag, Post } from '/src/libs/types';
 import { useLocalStorage } from '/src/libs/hooks';
 
 const API_URL = String(process.env.API_URL);
@@ -35,12 +35,21 @@ export const useApi = () => {
                     call<Tag[]>(`${API_URL}/tags?query=${query}`, { method: 'GET', headers }),
             },
             posts: {
-                attachTag: (postId: string, name: string) => 
-                    call(`${API_URL}/posts/${postId}/tags/attach`, { method: 'POST', headers, body: JSON.stringify({ name }) }),
+                search: (query: string, page: number, sort: [string, number], tags: string[]) => {
+                    return call<{ count: number, time: number, data: Post[] }>(`${API_URL}/posts?${qs.stringify({
+                        query, page, sort: sort[0], sortDir: sort[1], tags
+                    })}`, { method: 'GET', headers });
+                },
+                tags: {
+                    list: (postId: string) =>
+                        call(`${API_URL}/posts/${postId}/tags`, { method: 'GEt', headers }),
+                    attach: (postId: string, name: string) => 
+                        call(`${API_URL}/posts/${postId}/tags/attach`, { method: 'POST', headers, body: JSON.stringify({ name }) }),
+                    detach: (postId: string, name: string) => 
+                        call(`${API_URL}/posts/${postId}/tags/detach`, { method: 'POST', headers, body: JSON.stringify({ name }) }),
+                },
             },
-            search: (query: string, page: number, sort: [string, number]) => {
-                return call(`${API_URL}/posts?query=${query}&page=${page}&sort=${sort[0]}&sortDir=${sort[1]}`, { method: 'GET', headers });
-            },
+            
             view: (postId: string) => {
                 return call(`${API_URL}/posts/${postId}/view`, { method: 'POST', headers })
             },

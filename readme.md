@@ -12,3 +12,4 @@ The crawler simply goes and fetches all the posts from a list of curated feeds. 
 + Check tags uniqueness on BE
 + Add authentication and rating
 + Add curated collections
++ Debounce tag search in tags-input

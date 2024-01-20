@@ -10,7 +10,7 @@ import { useApi } from '/src/api';
 
 import { CloseOutline } from '@styled-icons/evaicons-outline/CloseOutline';
 
-const TAG_COLOR = '#3f51b5';
+export const TAG_COLOR = '#3f51b5';
 
 const Option = styled(Clickable)`
     display: block;
@@ -38,7 +38,7 @@ export const Tag = ({ color, children, onRemove, ...props }: React.PropsWithChil
     );
 };
 
-export const TagsInput = ({ value, onRemove, onAttach, ...props }: { value: string[], onRemove: (name: string) => void, onAttach: (name: string) => void } & BaseProps) => {
+export const TagsInput = ({ canCreate, value, onRemove, onAttach, ...props }: { canCreate: boolean, value: string[], onRemove: (name: string) => void, onAttach: (name: string) => void } & BaseProps) => {
     const api = useApi();
     const [query, setQuery] = React.useState('');
 
@@ -79,14 +79,12 @@ export const TagsInput = ({ value, onRemove, onAttach, ...props }: { value: stri
         });
     }, [query, updateOptions]);
 
-    console.log(value)
-
     return (
         <Base {...props}>
             <Base mb="12px">
                 <Flex justify="flex-start" gap="8px">
                     {value.map((tag, index) => (
-                        <Tag color={TAG_COLOR} onRemove={() => remove(index)}>
+                        <Tag key={index} color={TAG_COLOR} onRemove={() => remove(index)}>
                             <Text size="12px" weight="800" color="#ffffff">{tag}</Text>
                         </Tag>
                     ))}
@@ -114,15 +112,34 @@ export const TagsInput = ({ value, onRemove, onAttach, ...props }: { value: stri
                             </Option>
                         ))}
 
-                        <Option p="8px" onClick={create}>
-                            <Text size="14px" weight="800" color="#333333">
-                                Создать тэг&nbsp;&nbsp;
-                                
-                                <Tag color={TAG_COLOR}>
-                                    <Text size="12px" weight="800" color="#ffffff">{query}</Text>
-                                </Tag>
-                            </Text>
-                        </Option>
+                        {canCreate && (
+                            <Option p="8px" onClick={create}>
+                                <Text size="14px" weight="800" color="#333333">
+                                    Создать тэг&nbsp;&nbsp;
+                                    
+                                    <Tag color={TAG_COLOR}>
+                                        <Text size="12px" weight="800" color="#ffffff">{query}</Text>
+                                    </Tag>
+                                </Text>
+                            </Option>
+                        )}
+
+                        {options.length === 0 && canCreate === false && query !== '' && (
+                            <Option p="8px">
+                                <Text size="14px" weight="800" color="#333333">
+                                    Ничего не найдено
+                                </Text>
+                            </Option>
+                        )}
+
+                        {options.length === 0 && canCreate === false && query === '' && (
+                            <Option p="8px">
+                                <Text size="14px" weight="800" color="#333333">
+                                    Наберите текст, чтобы начать поиск
+                                </Text>
+                            </Option>
+                        )}
+                        
                     </Dropdown>
                 )}
             </Relative>

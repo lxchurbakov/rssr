@@ -2,10 +2,10 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import styled, { css } from 'styled-components';
 
-// import { CloseOutline } from '@styled-icons/evaicons-outline/CloseOutline';
+import { CloseOutline } from '@styled-icons/evaicons-outline/CloseOutline';
 
 import * as theme from './theme';
-// import { useListener } from './hooks';
+import { useListener } from './hooks';
 
 export type PropsOf<T> = T extends React.FC<infer P> ? P : never;
 
@@ -128,49 +128,49 @@ export const Disabled = styled(Base)<{ disabled: boolean }>`
     `};
 `;
 
-// const ModalCard = styled(Card)`
-//     position: fixed;
-//     top: 0;
-//     left: 0;
-//     width: 100vw;
-//     height: 100vh;
-//     z-index: 50;
-//     overflow: hidden;
-// `;
+const ModalCard = styled(Card)`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    overflow: hidden;
+`;
 
-// const CloseModal = styled(Clickable)`
-//     position: absolute;
-//     top: 16px;
-//     right: 16px;
-//     z-index: 51;
-// `;
+const CloseModal = styled(Clickable)`
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 51;
+`;
 
-// const modals = document.getElementById('modals');
+const modals = document.getElementById('modals');
 
-// export const Modal = ({ key, onClose, children, ...props }: React.PropsWithChildren<{ onClose?: () => void, key: string } & BaseProps>) => {
-//     useListener(window, 'keydown', (e: KeyboardEvent) => {
-//         if (e.key === 'Escape') {
-//             onClose();
-//         }
-//     }, [onClose]);
+export const Modal = ({ name, onClose, children, ...props }: React.PropsWithChildren<{ onClose?: (e?: any) => void, name: string } & BaseProps>) => {
+    useListener(window, 'keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            onClose();
+        }
+    }, [onClose]);
 
-//     return createPortal((
-//         <ModalCard color="#181B1DAA" {...props}>
-//             {onClose && (
-//                 <CloseModal onClick={onClose}>
-//                     <Flex dir="column">
-//                         <CloseOutline size={32} color="white" />
-//                         <Text size="14px" color="white" weight="400">ESC</Text>
-//                     </Flex>
-//                 </CloseModal>
-//             )}
+    return createPortal((
+        <ModalCard background="#ffffff99" {...props}>
+            {onClose && (
+                <CloseModal onClick={onClose}>
+                    <Flex dir="column">
+                        <CloseOutline size={32} color="#333" />
+                        <Text size="14px" color="#333" weight="400">ESC</Text>
+                    </Flex>
+                </CloseModal>
+            )}
             
-//             <Flex w="100%" h="100%" justify="center" align="center">
-//                 {children}
-//             </Flex>
-//         </ModalCard>
-//     ), modals, key);
-// };
+            <Flex w="100%" h="100%" justify="center" align="center">
+                {children}
+            </Flex>
+        </ModalCard>
+    ), modals, name);
+};
 
 export const Relative = styled(Base)`
     position: relative;

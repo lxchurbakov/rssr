@@ -21,7 +21,7 @@ export default class {
             const page = Number(req.query.page);
             const sort = String(req.query.sort);
             const sortDir = String(req.query.sortDir);
-            console.log(req.query.tags)
+            const tags = Array.from(req.query.tags || []);
 
             const start = process.hrtime();
 
@@ -33,11 +33,11 @@ export default class {
                             { content: { $regex: query, $options: 'i' } },
                         ],
                     },
-                    // {
-                    //     tags: {
-                    //         $all: tags,
-                    //     }
-                    // }
+                    (tags.length > 0 ? {
+                        tags: {
+                            $all: tags,
+                        }
+                    } : {}),
                 ],
             };
 

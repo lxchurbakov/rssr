@@ -37,10 +37,12 @@ export type TextInputProps = {
     type?: string;
     placeholder?: string;
     onEnter?: () => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
 };
 
 export const LineInput = ({ 
-    type, placeholder,  value, onChange,  size, weight, color, background, border, outline, onEnter, ...props 
+    type, placeholder,  value, onChange,  size, weight, color, background, border, outline, onEnter, onFocus, onBlur, ...props 
 }: TextInputProps & StyledInputProps & Input<string> & BaseProps) => {
     const handleKeyDown = React.useCallback((e) => {
         if (e.keyCode === 13) {
@@ -56,6 +58,7 @@ export const LineInput = ({
                 placeholder={placeholder} 
                 onChange={(e) => onChange(e.target.value || '')} 
                 onKeyDown={handleKeyDown}
+                {...{ onFocus, onBlur }}
                 {...{ size, weight, color, background, border, outline }} 
             />
         </Base>
