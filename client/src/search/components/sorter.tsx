@@ -17,15 +17,11 @@ const compare = (a: Value, b: Value) => {
 };
 
 const OPTIONS = [
-    { label: 'новые', value: ['pubDate', 1] },
-    { label: 'старые', value: ['pubDate', -1] },
+    { label: 'новые', value: ['pubDate', -1] },
+    { label: 'старые', value: ['pubDate', 1] },
     { label: 'наиболее просмотренные', value: ['views', -1] },
     { label: 'наименее просмотренные', value: ['views', 1] },
 ] as Options<Value>;
-
-// const Dropdown = styled(Card)`
-//     box-shadow: 0 0 4px 0 rgba(0,0,0,.12);
-// `;
 
 const Option = styled(Clickable)`
     display: block;

@@ -1,27 +1,14 @@
 import React from 'react';
+
 import { Text } from '/src/libs/atoms';
+
+import { ohthisrussian } from './utils';
 
 const MINUTE = 1000 * 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 const MONTH = DAY * 30;
 const YEAR = MONTH * 12;
-
-const ohthisrussian = ($, f1, f2, f3) => {
-    if ($ > 10 && $ < 15) {
-        return f3; // 11/12/13/14 лет назад
-    }
-
-    if ($ % 10 === 1) {
-        return f1; // 1/21/31 год назад
-    }
-
-    if ($ % 10 > 1 && $ % 10 < 5) {
-        return f2; // 22 года назад - 24 года назад
-    }
-
-    return f3; // 15/25/35 (X6/X7/X8/X9/X0) лет назад
-};
 
 const timeage = (date: Date) => {
     const now = new Date();

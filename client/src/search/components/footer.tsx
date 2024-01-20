@@ -8,7 +8,7 @@ const JAM_LINK =
     'https://gist.github.com/lxchurbakov/5e855f20a70d09e60e25431265666162';
 
 const FEEDS_SOURCE_LINK = 
-    'https://gist.githubusercontent.com/lxchurbakov/5e855f20a70d09e60e25431265666162/raw/b061668cdae57526a9d63c69b999187db0740828/feeds.json';
+    'https://gist.githubusercontent.com/lxchurbakov/5e855f20a70d09e60e25431265666162/raw/cade6bcf2d9ee7580a6fb7249e81ae60b8910062/feeds.json';
 
 export const Footer = ({ ...props }) => {
     return (
